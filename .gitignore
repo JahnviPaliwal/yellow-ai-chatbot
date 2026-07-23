@@ -1,0 +1,13 @@
+# Python ignores
+backend/__pycache__/
+backend/venv/
+backend/.venv/
+backend/.env
+backend/*.db
+
+# Node/React ignores
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env.production
