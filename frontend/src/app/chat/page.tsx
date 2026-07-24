@@ -101,14 +101,14 @@ export default function ChatPage() {
               </button>
               <button
                 onClick={() => setIsMemoryOpen(true)}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-[#6B7280] dark:text-slate-400 hover:text-[#111827] hover:bg-[#FFF7D6]/40 transition-all text-left"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-[#6B7280] dark:text-slate-400 hover:text-[#111827] dark:hover:text-slate-200 hover:bg-[#FFF7D6]/40 dark:hover:bg-slate-900 transition-all text-left"
               >
                 <BrainCircuit className="w-4 h-4" />
                 <span>Memory</span>
               </button>
               <button
                 onClick={() => router.push('/projects')}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-[#6B7280] dark:text-slate-400 hover:text-[#111827] hover:bg-[#FFF7D6]/40 transition-all text-left"
+                className="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-medium text-[#6B7280] dark:text-slate-400 hover:text-[#111827] dark:hover:text-slate-200 hover:bg-[#FFF7D6]/40 dark:hover:bg-slate-900 transition-all text-left"
               >
                 <Folder className="w-4 h-4" />
                 <span>Projects</span>
@@ -124,7 +124,7 @@ export default function ChatPage() {
           {/* User Profile Footer */}
           <div
             onClick={() => setIsSettingsOpen(true)}
-            className="flex items-center space-x-3 pt-3 border-t border-[#E5E7EB] dark:border-slate-800 cursor-pointer hover:bg-[#FFF7D6]/40 dark:hover:bg-slate-905 p-2 rounded-xl -mx-2 transition-all"
+            className="flex items-center space-x-3 pt-3 border-t border-[#E5E7EB] dark:border-slate-800 cursor-pointer hover:bg-[#FFF7D6]/40 dark:hover:bg-slate-900 p-2 rounded-xl -mx-2 transition-all"
           >
             <div className="w-9 h-9 rounded-full bg-[#FFF7D6] dark:bg-amber-500/10 border border-[#FFF0A3] dark:border-amber-500/20 flex items-center justify-center font-bold text-[#111827] dark:text-amber-400 text-xs shrink-0">
               {getInitials(user?.name)}

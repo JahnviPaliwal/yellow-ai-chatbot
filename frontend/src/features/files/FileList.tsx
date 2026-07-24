@@ -39,14 +39,14 @@ export const FileList: React.FC<FileListProps> = ({ projectId }) => {
       {projectFiles.map((file) => (
         <div
           key={file.id}
-          className="flex items-center justify-between p-2.5 rounded-xl bg-[#F9FAFB] border border-[#E5E7EB] text-xs"
+          className="flex items-center justify-between p-2.5 rounded-xl bg-[#F9FAFB] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-xs"
         >
           <div className="flex items-center space-x-2.5 min-w-0">
             <FileText className="w-4 h-4 text-[#F2C94C] shrink-0" />
             <div className="min-w-0">
-              <p className="text-[#111827] font-semibold truncate">{file.filename}</p>
-              <div className="flex items-center space-x-1.5 text-[10px] text-[#6B7280] font-mono mt-0.5">
-                <Database className="w-3 h-3 text-[#6B7280]" />
+              <p className="text-[#111827] dark:text-slate-200 font-semibold truncate">{file.filename}</p>
+              <div className="flex items-center space-x-1.5 text-[10px] text-[#6B7280] dark:text-slate-400 font-mono mt-0.5">
+                <Database className="w-3 h-3 text-[#6B7280] dark:text-slate-400" />
                 <span>{file.provider_file_id}</span>
               </div>
             </div>

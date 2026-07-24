@@ -83,15 +83,15 @@ export const ConversationList: React.FC<ConversationListProps> = ({ projectId })
         onClick={() => setActiveConversationId(conv.id)}
         className={`group w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium cursor-pointer transition-all ${
           isActive
-            ? 'bg-[#FFF7D6] text-[#111827] shadow-sm font-semibold'
-            : 'text-[#6B7280] hover:text-[#111827] hover:bg-[#FFF7D6]/40'
+            ? 'bg-[#FFF7D6] dark:bg-amber-500/10 text-[#111827] dark:text-amber-400 shadow-sm font-semibold'
+            : 'text-[#6B7280] dark:text-slate-400 hover:text-[#111827] dark:hover:text-slate-200 hover:bg-[#FFF7D6]/40 dark:hover:bg-slate-900'
         }`}
       >
         <div className="flex items-center space-x-2.5 min-w-0 pr-2">
           {hasProject ? (
-            <Folder className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#F2C94C]' : 'text-[#6B7280]'}`} />
+            <Folder className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#F2C94C]' : 'text-[#6B7280] dark:text-slate-400'}`} />
           ) : (
-            <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#F2C94C]' : 'text-[#6B7280]'}`} />
+            <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#F2C94C]' : 'text-[#6B7280] dark:text-slate-400'}`} />
           )}
           <span className="truncate">{conv.title}</span>
         </div>

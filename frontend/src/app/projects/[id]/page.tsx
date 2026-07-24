@@ -94,11 +94,11 @@ export default function ProjectPage() {
   if (isLoading) {
     return (
       <AuthGuard>
-        <div className="min-h-screen bg-white p-6 flex flex-col space-y-6">
-          <Skeleton className="h-12 w-64 bg-[#F9FAFB]" />
+        <div className="min-h-screen bg-white dark:bg-slate-950 p-6 flex flex-col space-y-6">
+          <Skeleton className="h-12 w-64 bg-[#F9FAFB] dark:bg-slate-900" />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
-            <Skeleton className="lg:col-span-4 h-[600px] bg-[#F9FAFB]" />
-            <Skeleton className="lg:col-span-8 h-[600px] bg-[#F9FAFB]" />
+            <Skeleton className="lg:col-span-4 h-[600px] bg-[#F9FAFB] dark:bg-slate-900" />
+            <Skeleton className="lg:col-span-8 h-[600px] bg-[#F9FAFB] dark:bg-slate-900" />
           </div>
         </div>
       </AuthGuard>
@@ -131,7 +131,7 @@ export default function ProjectPage() {
             </Button>
             <div className="h-4 w-px bg-[#E5E7EB] dark:bg-slate-800" />
             <div className="flex items-center space-x-2">
-              <h1 className="text-sm font-bold text-[#111827] dark:text-slate-150">{currentProject.name}</h1>
+              <h1 className="text-sm font-bold text-[#111827] dark:text-slate-100">{currentProject.name}</h1>
               <Badge variant="amber">Active Project</Badge>
             </div>
           </div>

@@ -119,7 +119,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ projectId }) => {
       )}
 
       {attachedFile && (
-        <div className="mb-2 flex items-center justify-between p-2 rounded-xl bg-[#FFF7D6] border border-[#FFF0A3] text-xs text-[#111827]">
+        <div className="mb-2 flex items-center justify-between p-2 rounded-xl bg-[#FFF7D6] dark:bg-amber-500/10 border border-[#FFF0A3] dark:border-amber-500/20 text-xs text-[#111827] dark:text-slate-100">
           <div className="flex items-center space-x-2">
             <FileText className="w-4 h-4 text-[#F2C94C]" />
             <span className="font-medium truncate max-w-xs">{attachedFile.name}</span>
@@ -128,14 +128,14 @@ export const MessageInput: React.FC<MessageInputProps> = ({ projectId }) => {
           <button
             type="button"
             onClick={() => setAttachedFile(null)}
-            className="text-[#6B7280] hover:text-[#111827] p-0.5 rounded-lg"
+            className="text-[#6B7280] dark:text-slate-400 hover:text-[#111827] dark:hover:text-slate-100 p-0.5 rounded-lg"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
-      <div className="relative rounded-2xl bg-[#F9FAFB] border border-[#E5E7EB] focus-within:border-[#F2C94C] focus-within:ring-1 focus-within:ring-[#F2C94C] transition-all p-2">
+      <div className="relative rounded-2xl bg-[#F9FAFB] dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 focus-within:border-[#F2C94C] focus-within:ring-1 focus-within:ring-[#F2C94C] transition-all p-2">
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -143,16 +143,16 @@ export const MessageInput: React.FC<MessageInputProps> = ({ projectId }) => {
           placeholder="Ask anything or attach a file (code, docs, video, audio, data)..."
           disabled={!activeConversationId || isGeneratingResponse}
           rows={2}
-          className="w-full bg-transparent text-[#111827] placeholder-[#6B7280] text-sm outline-none resize-none px-3 py-1.5 font-sans"
+          className="w-full bg-transparent text-[#111827] dark:text-slate-100 placeholder-[#6B7280] dark:placeholder-slate-500 text-sm outline-none resize-none px-3 py-1.5 font-sans"
         />
 
-        <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] px-2">
+        <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] dark:border-slate-800 px-2">
           <div className="flex items-center space-x-3">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading || (quota ? quota.remaining_uploads <= 0 : false)}
-              className="flex items-center space-x-1.5 text-xs text-[#6B7280] hover:text-[#F2C94C] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center space-x-1.5 text-xs text-[#6B7280] dark:text-slate-400 hover:text-[#F2C94C] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               title="Attach File (Code, Video, Audio, Docs, Binary)"
             >
               <Paperclip className="w-4 h-4" />
@@ -160,7 +160,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ projectId }) => {
             </button>
 
             {quota && (
-              <span className="text-[11px] text-[#6B7280] font-mono">
+              <span className="text-[11px] text-[#6B7280] dark:text-slate-400 font-mono">
                 {quota.daily_uploaded_count}/7 uploads today
               </span>
             )}

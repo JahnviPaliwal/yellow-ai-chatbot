@@ -50,11 +50,11 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ projectId }) => {
   };
 
   return (
-    <div className="bg-[#F9FAFB] rounded-xl p-4 border border-[#E5E7EB] space-y-3 shadow-sm">
+    <div className="bg-[#F9FAFB] dark:bg-slate-900 rounded-xl p-4 border border-[#E5E7EB] dark:border-slate-800 space-y-3 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Sparkles className="w-4 h-4 text-[#F2C94C]" />
-          <h4 className="text-xs font-semibold text-[#111827] uppercase tracking-wider">
+          <h4 className="text-xs font-semibold text-[#111827] dark:text-slate-200 uppercase tracking-wider">
             Active System Prompt
           </h4>
         </div>

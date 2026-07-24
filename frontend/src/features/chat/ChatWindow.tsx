@@ -50,7 +50,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ projectId }) => {
 
   if (!activeConversationId) {
     return (
-      <div className="h-full flex items-center justify-center p-6 bg-white">
+      <div className="h-full flex items-center justify-center p-6 bg-white dark:bg-slate-950">
         <EmptyState
           icon={MessageSquare}
           title="No Conversation Selected"
@@ -62,23 +62,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ projectId }) => {
 
   if (isLoadingHistory) {
     return (
-      <div className="p-6 space-y-4 bg-white">
-        <Skeleton className="h-16 w-3/4 bg-[#E5E7EB]" />
-        <Skeleton className="h-20 w-1/2 ml-auto bg-[#E5E7EB]" />
-        <Skeleton className="h-16 w-2/3 bg-[#E5E7EB]" />
+      <div className="p-6 space-y-4 bg-white dark:bg-slate-950">
+        <Skeleton className="h-16 w-3/4 bg-[#E5E7EB] dark:bg-slate-800" />
+        <Skeleton className="h-20 w-1/2 ml-auto bg-[#E5E7EB] dark:bg-slate-800" />
+        <Skeleton className="h-16 w-2/3 bg-[#E5E7EB] dark:bg-slate-800" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-white">
+    <div className="flex flex-col h-full overflow-hidden bg-white dark:bg-slate-950">
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#6B7280] space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#FFF7D6] flex items-center justify-center text-[#F2C94C] shadow-sm">
+          <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#6B7280] dark:text-slate-400 space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#FFF7D6] dark:bg-amber-500/10 flex items-center justify-center text-[#F2C94C] shadow-sm">
               <Bot className="w-6 h-6" />
             </div>
-            <p className="text-sm font-semibold text-[#111827]">Conversation Initialized</p>
+            <p className="text-sm font-semibold text-[#111827] dark:text-slate-100">Conversation Initialized</p>
             <p className="text-xs max-w-sm">
               Type a message or attach a file below to start chatting. OpenAI and Groq AI models will respond dynamically.
             </p>
@@ -88,9 +88,11 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({ projectId }) => {
         )}
 
         {isGeneratingResponse && (
-          <div className="flex items-center space-x-3 text-xs text-[#6B7280] animate-fade-in p-2">
-            <Spinner size="sm" />
-            <span className="font-medium">Formulating response...</span>
+          <div className="flex items-center space-x-2.5 animate-fade-in p-2">
+            <div className="w-8 h-8 rounded-xl bg-[#FFF7D6] dark:bg-amber-500/10 flex items-center justify-center text-[#F2C94C] shadow-sm animate-bounce">
+              <Bot className="w-4.5 h-4.5" />
+            </div>
+            <span className="text-[10px] font-medium text-[#6B7280] dark:text-slate-400 italic animate-pulse">thinking...</span>
           </div>
         )}
 

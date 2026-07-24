@@ -71,15 +71,15 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ projectId }) => {
         onClick={() => fileInputRef.current?.click()}
         className={`border border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
           dragActive
-            ? 'border-[#F2C94C] bg-[#FFF7D6]/35'
-            : 'border-[#E5E7EB] hover:border-[#F2C94C] bg-[#F9FAFB] hover:bg-[#FFF7D6]/20'
+            ? 'border-[#F2C94C] bg-[#FFF7D6]/35 dark:bg-[#FFF7D6]/10'
+            : 'border-[#E5E7EB] dark:border-slate-800 hover:border-[#F2C94C] dark:hover:border-[#F2C94C] bg-[#F9FAFB] dark:bg-slate-900 hover:bg-[#FFF7D6]/20 dark:hover:bg-[#FFF7D6]/10'
         }`}
       >
         <UploadCloud className="w-6 h-6 text-[#F2C94C] mx-auto mb-1.5" />
-        <p className="text-xs font-semibold text-[#111827]">
+        <p className="text-xs font-semibold text-[#111827] dark:text-slate-200">
           {isUploading ? 'Uploading & Registering Provider File...' : 'Upload Supporting File'}
         </p>
-        <p className="text-[10px] text-[#6B7280] mt-0.5">
+        <p className="text-[10px] text-[#6B7280] dark:text-slate-400 mt-0.5">
           Drag & drop or click to attach document
         </p>
       </div>

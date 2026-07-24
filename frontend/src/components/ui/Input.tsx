@@ -23,7 +23,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             ref={ref}
-            className={`w-full bg-[#F9FAFB] text-[#111827] placeholder-[#6B7280] text-sm rounded-xl border border-[#E5E7EB] focus:border-[#F2C94C] focus:ring-1 focus:ring-[#F2C94C] transition-all duration-150 outline-none ${
+            className={`w-full bg-[#F9FAFB] dark:bg-slate-950 text-[#111827] dark:text-slate-100 placeholder-[#6B7280] dark:placeholder-slate-500 text-sm rounded-xl border border-[#E5E7EB] dark:border-slate-800 focus:border-[#F2C94C] dark:focus:border-[#F2C94C] focus:ring-1 focus:ring-[#F2C94C] transition-all duration-150 outline-none ${
               leftIcon ? 'pl-10' : 'px-3.5'
             } py-2.5 ${error ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : ''} ${className}`}
             {...props}

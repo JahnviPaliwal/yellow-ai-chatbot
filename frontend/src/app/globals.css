@@ -8,6 +8,11 @@
   --primary-yellow: 242, 201, 76; /* #F2C94C */
 }
 
+.dark {
+  --foreground-rgb: 241, 245, 249; /* text-slate-100 */
+  --background-rgb: 2, 6, 23; /* bg-slate-950 */
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
@@ -24,12 +29,21 @@ body {
 ::-webkit-scrollbar-track {
   background: #F9FAFB;
 }
+.dark ::-webkit-scrollbar-track {
+  background: #020617;
+}
 
 ::-webkit-scrollbar-thumb {
   background: #E5E7EB;
   border-radius: 9999px;
 }
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
 
 ::-webkit-scrollbar-thumb:hover {
   background: #D1D5DB;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #334155;
 }
