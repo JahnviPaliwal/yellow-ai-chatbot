@@ -11,6 +11,8 @@ interface ChatState {
   setMessages: (messages: Message[]) => void;
   addMessage: (message: Message) => void;
   setIsGeneratingResponse: (status: boolean) => void;
+  updateMessageContent: (messageId: number, content: string) => void;
+  replaceMessage: (tempId: number, realMessage: Message) => void;
   addConversation: (conversation: Conversation) => void;
   updateConversation: (conversation: Conversation) => void;
   removeConversation: (id: number) => void;
@@ -26,6 +28,14 @@ export const useChatStore = create<ChatState>((set) => ({
   setMessages: (messages) => set({ messages }),
   addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
   setIsGeneratingResponse: (status) => set({ isGeneratingResponse: status }),
+  updateMessageContent: (messageId, content) =>
+    set((state) => ({
+      messages: state.messages.map((m) => (m.id === messageId ? { ...m, content } : m)),
+    })),
+  replaceMessage: (tempId, realMessage) =>
+    set((state) => ({
+      messages: state.messages.map((m) => (m.id === tempId ? realMessage : m)),
+    })),
   addConversation: (conversation) => set((state) => ({ conversations: [conversation, ...state.conversations] })),
   updateConversation: (conversation) =>
     set((state) => ({

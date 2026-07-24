@@ -137,3 +137,65 @@ class LLMService:
                     return f"The user noted: {fact}"
         return None
 
+    def generate_response_stream(
+        self,
+        system_prompt: str,
+        files_context: List[str],
+        messages_history: List[Dict[str, str]],
+        user_message: str
+    ):
+        """Route streaming request according to LLM_PROVIDER and execute fallback if OpenAI fails."""
+        if self.provider_setting == "groq":
+            return self._execute_groq_stream_with_fallback(
+                system_prompt, files_context, messages_history, user_message
+            )
+
+        return self._execute_openai_stream_with_groq_fallback(
+            system_prompt, files_context, messages_history, user_message
+        )
+
+    def _execute_openai_stream_with_groq_fallback(
+        self,
+        system_prompt: str,
+        files_context: List[str],
+        messages_history: List[Dict[str, str]],
+        user_message: str
+    ):
+        """Attempt streaming from OpenAI first; fall back to Groq stream if OpenAI fails."""
+        try:
+            for chunk in self.openai_provider.generate_response_stream(
+                system_prompt, files_context, messages_history, user_message
+            ):
+                yield chunk
+        except Exception as openai_exc:
+            logger.warning(f"OpenAI streaming provider failed ({openai_exc}). Falling back to Groq stream.")
+            try:
+                for chunk in self.groq_provider.generate_response_stream(
+                    system_prompt, files_context, messages_history, user_message
+                ):
+                    yield chunk
+            except Exception as groq_exc:
+                logger.warning(f"Groq fallback stream also failed ({groq_exc}). Streaming simulated response.")
+                simulated = self._generate_simulated_response(system_prompt, user_message)
+                for char in simulated:
+                    yield char
+
+    def _execute_groq_stream_with_fallback(
+        self,
+        system_prompt: str,
+        files_context: List[str],
+        messages_history: List[Dict[str, str]],
+        user_message: str
+    ):
+        """Stream directly from Groq."""
+        try:
+            for chunk in self.groq_provider.generate_response_stream(
+                system_prompt, files_context, messages_history, user_message
+            ):
+                yield chunk
+        except Exception as groq_exc:
+            logger.warning(f"Groq streaming provider failed ({groq_exc}). Streaming simulated response.")
+            simulated = self._generate_simulated_response(system_prompt, user_message)
+            for char in simulated:
+                yield char
+

@@ -159,3 +159,52 @@ graph LR
 ### Decision: Asynchronous I/O Programming (FastAPI + Async SQLAlchemy)
 * **Rationale**: AI pipelines are I/O bound (waiting on database calls and third-party LLM API HTTP responses). Asynchronous routing enables the server to process concurrent user requests on a single event loop without thread starvation.
 * **System Effect**: Maximizes resource usage, keeping system overhead low and backend API responses fast.
+
+---
+
+## 5. Detailed Component Deep-Dive: Streaming & RAG Mechanics
+
+The platform incorporates real-time streaming and a local semantic search engine (RAG) designed to balance user experience and zero-config portability.
+
+### A. Non-Blocking RAG Ingestion Pipeline
+When files are uploaded to a project workspace, the following background pipeline is executed:
+
+```text
+[File Upload API] ──► [Save Metadata to DB] ──► [Trigger Background Task]
+                                                      │
+                                                      ▼
+[Write JSON Embeddings] ◄── [Batch OpenAI Embed] ◄── [Chunk Content (800c/100o)]
+```
+
+1. **API Handshake**: The user uploads a document through the file upload API. The API instantly registers the file metadata in the `files` table and queues a backend task via FastAPI's `BackgroundTasks`. The HTTP response returns immediately, eliminating upload delay.
+2. **Text Chunking**: The background task decodes the raw file bytes into a UTF-8 string and splits the text into semantic segments:
+   * **Chunk Size**: 800 characters.
+   * **Overlap Size**: 100 characters (to preserve context across chunk boundaries).
+3. **Batch Embeddings**: The chunks are transmitted in a single batch API call to OpenAI's `text-embedding-3-small` model, generating a 1536-dimensional float vector for each chunk.
+4. **Relational Storage**: The chunks and their JSON-serialized float vectors are stored in the `file_chunks` table, mapped directly to the parent file ID via a cascade delete constraint.
+
+### B. Lightweight Database-Agnostic Similarity Search
+To preserve the SQLite development fallback alongside production PostgreSQL, vector matching is executed at the application service layer:
+* **Query Embedding**: The user's prompt is embedded dynamically using the same `text-embedding-3-small` model.
+* **Pure Python Cosine Similarity**: All chunks associated with the active project's files are loaded into memory. The backend calculates cosine similarity between the query embedding and chunk vectors in Python:
+  $$\text{Similarity}(\mathbf{A}, \mathbf{B}) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|}$$
+* **Threshold & Filtering**: Chunks with a similarity score below $0.25$ are discarded. The top 5 highest-scoring chunks are injected into the LLM system prompt as a structured document context segment.
+
+### C. Server-Sent Events (SSE) Stream Lifecycle
+The `/chat/stream` API endpoint streams chat replies token-by-token using standard Server-Sent Events (`text/event-stream`):
+
+```text
+[Client Fetch] ──► [Event: user_message] ──► [Event: token (xN)] ──► [Event: assistant_message] ──► [data: [DONE]]
+```
+
+* **Event Stage 1 (`user_message`)**: Instantly yields the user's message database record. This enables the client to synchronize its local message view with the correct database primary key.
+* **Event Stage 2 (`token`)**: Yields individual text tokens as they are received from the LLM provider stream (e.g., `data: {"event": "token", "token": "hello"}`).
+* **Event Stage 3 (`assistant_message`)**: Once the stream ends, the full compiled response is committed to the database, and the assistant message's final database record is yielded.
+* **Event Stage 4 (`data: [DONE]`)**: Closes the event stream connection cleanly.
+
+### D. Frontend Optimizations & Zustand State Synchronization
+To prevent layout shifts and eliminate user interaction lag:
+1. **Optimistic Rendering**: The user's input message and an empty assistant message box are appended to the Zustand store *instantly* upon clicking "Send".
+2. **Text Chunk Appending**: As `token` events stream in, the client updates the temporary assistant message bubble in real-time.
+3. **Primary Key Resolution**: When the `user_message` and `assistant_message` events yield final database records, the client updates the store, replacing the temporary IDs with the permanent database primary keys.
+

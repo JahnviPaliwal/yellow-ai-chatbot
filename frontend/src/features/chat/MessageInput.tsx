@@ -20,7 +20,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ projectId }) => {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { activeConversationId, addMessage, setIsGeneratingResponse, isGeneratingResponse, messages, setConversations } = useChatStore();
+  const { activeConversationId, addMessage, setIsGeneratingResponse, isGeneratingResponse, messages, setConversations, updateMessageContent, replaceMessage } = useChatStore();
 
   const fetchQuota = async () => {
     try {
@@ -73,22 +73,104 @@ export const MessageInput: React.FC<MessageInputProps> = ({ projectId }) => {
     setUploadError(null);
     setIsGeneratingResponse(true);
 
+    // 1. Create temporary local message slots for user and assistant responses
+    const tempUserMsgId = -1 * Math.floor(Math.random() * 1000000) - 1;
+    const tempAssistantMsgId = tempUserMsgId - 1;
+
+    const tempUserMsg = {
+      id: tempUserMsgId,
+      conversation_id: activeConversationId,
+      role: 'user' as const,
+      content: inputMessage,
+      created_at: new Date().toISOString(),
+    };
+
+    const tempAssistantMsg = {
+      id: tempAssistantMsgId,
+      conversation_id: activeConversationId,
+      role: 'assistant' as const,
+      content: '',
+      created_at: new Date().toISOString(),
+    };
+
+    // Instantly append messages to render state
+    addMessage(tempUserMsg);
+    addMessage(tempAssistantMsg);
+
     try {
-      const response = await chatService.sendMessage(activeConversationId, inputMessage, projectId || null);
-      if (response.success && response.data) {
-        addMessage(response.data.user_message);
-        addMessage(response.data.assistant_message);
-        if (isFirstMessage) {
-          const listRes = projectId
-            ? await chatService.getProjectConversations(projectId)
-            : await chatService.getUserConversations();
-          if (listRes.success && listRes.data) {
-            setConversations(listRes.data);
+      const token = localStorage.getItem('access_token');
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+      const response = await fetch(`${API_BASE_URL}/chat/stream`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token || ''}`,
+        },
+        body: JSON.stringify({
+          project_id: projectId || null,
+          conversation_id: activeConversationId,
+          message: inputMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Streaming response failed');
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Response body reader not available');
+      }
+
+      const decoder = new TextDecoder();
+      let accumulatedResponseText = '';
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // keep the last incomplete line in buffer
+
+        for (const line of lines) {
+          const cleanLine = line.trim();
+          if (!cleanLine.startsWith('data: ')) continue;
+          
+          const rawData = cleanLine.substring(6);
+          if (rawData === '[DONE]') continue;
+
+          try {
+            const dataObj = JSON.parse(rawData);
+            
+            if (dataObj.event === 'user_message') {
+              replaceMessage(tempUserMsgId, dataObj.message);
+            } else if (dataObj.event === 'token') {
+              accumulatedResponseText += dataObj.token;
+              updateMessageContent(tempAssistantMsgId, accumulatedResponseText);
+            } else if (dataObj.event === 'assistant_message') {
+              replaceMessage(tempAssistantMsgId, dataObj.message);
+            } else if (dataObj.event === 'error') {
+              setUploadError(dataObj.message);
+            }
+          } catch (e) {
+            // Catch parsing errors for incomplete lines
           }
         }
       }
+
+      if (isFirstMessage) {
+        const listRes = projectId
+          ? await chatService.getProjectConversations(projectId)
+          : await chatService.getUserConversations();
+        if (listRes.success && listRes.data) {
+          setConversations(listRes.data);
+        }
+      }
+
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to send message.');
+      alert(err.message || 'Failed to send message.');
     } finally {
       setIsGeneratingResponse(false);
     }
