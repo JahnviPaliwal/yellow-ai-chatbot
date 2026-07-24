@@ -1,7 +1,7 @@
 """File Upload & Management API Endpoints."""
 
 from typing import List, Optional
-from fastapi import APIRouter, Depends, File, Form, UploadFile, status, BackgroundTasks
+from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.database.session import get_db
@@ -34,7 +34,6 @@ def upload_file_universal(
     project_id: Optional[int] = Form(None),
     conversation_id: Optional[int] = Form(None),
     current_user: User = Depends(get_current_user),
-    background_tasks: BackgroundTasks = BackgroundTasks(),
     db: Session = Depends(get_db)
 ) -> APIResponse[FileResponse]:
     """Upload a file (standalone/in-chat or project-linked), enforcing 7 files/day limit."""
@@ -43,8 +42,7 @@ def upload_file_universal(
         user_id=current_user.id,
         file=file,
         project_id=project_id,
-        conversation_id=conversation_id,
-        background_tasks=background_tasks
+        conversation_id=conversation_id
     )
     return APIResponse(
         success=True,
@@ -58,7 +56,6 @@ def upload_project_file(
     project_id: int,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
-    background_tasks: BackgroundTasks = BackgroundTasks(),
     db: Session = Depends(get_db)
 ) -> APIResponse[FileResponse]:
     """Upload file for a specific project."""
@@ -66,8 +63,7 @@ def upload_project_file(
     file_record = service.upload_file(
         user_id=current_user.id,
         file=file,
-        project_id=project_id,
-        background_tasks=background_tasks
+        project_id=project_id
     )
     return APIResponse(
         success=True,
